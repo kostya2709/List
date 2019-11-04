@@ -91,7 +91,10 @@ int Insert_Before (List* list1, int location, double elem)
     if (Error_Check (list1, location))
         return -1;
     if (location == 0)
+    {
+        printf ("Error! You cannot insert before zero!\n");
         return -1;
+    }
 
     list1->size += 1;
     int pos = list1->free;
@@ -115,6 +118,56 @@ int Insert_Before (List* list1, int location, double elem)
     return 0;
 
 }
+
+int Delete (List* list1, int location)
+{
+
+    assert (list1);
+
+    if (Error_Check (list1, location))
+        return -1;
+    if (location == 0)
+    {
+        printf ("Error! You cannot delete zero!\n");
+        return -1;
+    }
+
+    list1->size -= 1;
+
+    if (location == list1->head)
+    {
+        int next_el = *(list1->next + location);
+        list1->head = next_el;
+        *(list1->prev + next_el) = 0;
+    }
+
+    if (location == list1->tail)
+    {
+        int prev_el = *(list1->prev + location);
+        list1->tail = prev_el;
+        *(list1->next + prev_el) = 0;
+    }
+
+    else
+    {
+        int next_el = *(list1->next + location);
+        int prev_el = *(list1->prev + location);
+
+        *(list1->prev + next_el) = prev_el;
+        *(list1->next + prev_el) = next_el;
+    }
+
+    *(list1->data + location) = 0;
+
+    *(list1->next + location) = list1->free;
+    *(list1->prev + location) = POISON;
+    list1->free = location;
+
+    return 0;
+
+}
+
+
 int List_Dump (List* list1, char* list_name)
 {
     printf ("\n\n\tList_name: %s\n", list_name);

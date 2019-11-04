@@ -61,3 +61,11 @@ int Insert_Before (List* list1, int location, double elem);
 @param[in] Number of the list to check.
 */
 int Error_Check (List* list1, int location);
+
+
+/*! This function deletes a member of the list.
+@param[in] Pointer to the list.
+@param[in] Number of the list to delete.
+\return Returns 0 if the function behaves correctly.
+*/
+int Delete (List* list1, int location);
