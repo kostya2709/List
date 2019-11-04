@@ -21,11 +21,13 @@ struct List
 
 };
 
+
 /*! This function creates a list!
 @param[in] Pointer to the list.
 \return Returns 0 if the function behaves correctly.
 */
 int List_Construct (List* list1);
+
 
 /*! This function prints the main information of the list.
 Attention! This function is to be required only from #define DUMP(); .
@@ -35,6 +37,7 @@ Attention! This function is to be required only from #define DUMP(); .
 */
 int List_Dump (List* list1, char* list_name);
 
+
 /*! This function inserts a member of the list after an elements of it.
 @param[in] Pointer to the list.
 @param[in] Number of the list after which another is to be inserted.
@@ -42,3 +45,19 @@ int List_Dump (List* list1, char* list_name);
 \return Returns 0 if the function behaves correctly.
 */
 int Insert_After (List* list1, int location, double elem);
+
+
+/*! This function inserts a member of the list before an elements of it.
+@param[in] Pointer to the list.
+@param[in] Number of the list before which another is to be inserted.
+@param[in] The element to insert.
+\return Returns 0 if the function behaves correctly.
+*/
+int Insert_Before (List* list1, int location, double elem);
+
+
+/*!This function checks whether location is valid.
+@param[in] Pointer to the list.
+@param[in] Number of the list to check.
+*/
+int Error_Check (List* list1, int location);

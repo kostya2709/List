@@ -36,6 +36,9 @@ int Insert_After (List* list1, int location, double elem)
 
     assert (list1);
 
+    if (Error_Check (list1, location))
+        return -1;
+
     list1->size += 1;
     int pos = list1->free;
     list1->free = *(list1->next + pos);
@@ -80,6 +83,38 @@ int Insert_After (List* list1, int location, double elem)
 }
 
 
+int Insert_Before (List* list1, int location, double elem)
+{
+
+    assert (list1);
+
+    if (Error_Check (list1, location))
+        return -1;
+    if (location == 0)
+        return -1;
+
+    list1->size += 1;
+    int pos = list1->free;
+    list1->free = *(list1->next + pos);
+
+    *(list1->data + pos) = elem;
+
+
+        int prev_el = *(list1->prev + location);
+        if (prev_el)
+            *(list1->next + prev_el) = pos;
+
+        *(list1->prev + location) = pos;
+        *(list1->next + pos) = location;
+        *(list1->prev + pos) = prev_el;
+
+        if (!prev_el)
+            list1->head = pos;
+
+
+    return 0;
+
+}
 int List_Dump (List* list1, char* list_name)
 {
     printf ("\n\n\tList_name: %s\n", list_name);
@@ -102,6 +137,29 @@ int List_Dump (List* list1, char* list_name)
     printf ("\n\nList head: %d\n", list1->head);
     printf ("List tail: %d\n", list1->tail);
     printf ("List free: %d\n\n\n", list1->free);
+
+    return 0;
+}
+
+int Error_Check (List* list1, int location)
+{
+    if (location < 0)
+    {
+        printf ("Error! Invalid index of list for Insert_After!\n");
+        printf ("Expected a number above zero\n");
+        printf ("Received: %d\n", location);
+
+        return -1;
+    }
+
+    if (*(list1->prev + location) == POISON || location > list1->max_size)
+    {
+        printf ("Error! Invalid index of list for Insert_After!\n");
+        printf ("Expected an existing element from zero to max_size! (max_size = %d)\n", list1->max_size);
+        printf ("Received: %d\n", location);
+
+        return -1;
+    }
 
     return 0;
 }
