@@ -4,13 +4,15 @@
 
 #define DUMP( list1 ); List_Dump ( &list1, #list1 );
 
-const int list_start_size = 7;
+const int list_start_size = 5;
+
+typedef double elem_t;
 
 const int POISON = -666;
 
 struct List
 {
-    double* data;
+    elem_t* data;
 	int* next;
 	int* prev;
 	int size;
@@ -44,7 +46,7 @@ int List_Dump (List* list1, char* list_name);
 @param[in] The element to insert.
 \return Returns 0 if the function behaves correctly.
 */
-int Insert_After (List* list1, int location, double elem);
+int Insert_After (List* list1, int location, elem_t elem);
 
 
 /*! This function inserts a member of the list before an elements of it.
@@ -53,7 +55,7 @@ int Insert_After (List* list1, int location, double elem);
 @param[in] The element to insert.
 \return Returns 0 if the function behaves correctly.
 */
-int Insert_Before (List* list1, int location, double elem);
+int Insert_Before (List* list1, int location, elem_t elem);
 
 
 /*!This function checks whether location is valid.
@@ -76,3 +78,17 @@ int Delete (List* list1, int location);
 \return Returns 0 if the function behaves correctly.
 */
 int Delete_After (List* list1, int location);
+
+/*! This function changes the allocated memory.
+@param[in] Pointer to the list.
+@param [in] New size of list.
+\return Returns 0 if the function behaves correctly.
+*/
+int List_Realloc (List* list1, int new_size);
+
+/*! This function cleans memory used by the list during the work with it.
+Attention! Use only after the work with the list.
+@param[in] Pointer to the list.
+\return Returns 0 if the function behaves correctly.
+*/
+int List_Destruct (List* list1);

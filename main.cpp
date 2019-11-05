@@ -23,9 +23,16 @@ int main()
 
     DUMP (list1);
 
-    Insert_After(&list1, 0, 228);
+    Insert_After(&list1, 3, 30);
 
     DUMP (list1);
+
+    Delete (&list1, 3);
+
+    DUMP (list1);
+
+    if (List_Destruct (&list1))
+        printf ("Error in pointers of the list in List_Destruct!\n");
 
 
     return 0;
