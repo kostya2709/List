@@ -167,6 +167,52 @@ int Delete (List* list1, int location)
 
 }
 
+int Delete_After (List* list1, int location)
+{
+
+    assert (list1);
+
+    if (Error_Check (list1, location))
+        return -1;
+    if (location == 0)
+    {
+        printf ("Error! You cannot delete a number after 0!\n");
+        return -1;
+    }
+    if (location == list1->tail)
+    {
+        printf ("Error! You cannot delete a number after the list tail!\n");
+        return -1;
+    }
+
+    list1->size -= 1;
+
+        int next_el = *(list1->next + location);
+
+        if (next_el == list1->tail)
+        {
+            *(list1->next + location) = 0;
+            list1->tail = location;
+        }
+
+        else
+        {
+            int next_next_el = *(list1->next + next_el);
+            *(list1->prev + next_next_el) = location;
+            *(list1->next + location) = next_next_el;
+        }
+
+
+    *(list1->data + next_el) = 0;
+
+    *(list1->next + next_el) = list1->free;
+    *(list1->prev + next_el) = POISON;
+    list1->free = next_el;
+
+    return 0;
+
+}
+
 
 int List_Dump (List* list1, char* list_name)
 {

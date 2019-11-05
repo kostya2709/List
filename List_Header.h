@@ -69,3 +69,10 @@ int Error_Check (List* list1, int location);
 \return Returns 0 if the function behaves correctly.
 */
 int Delete (List* list1, int location);
+
+/*! This function deletes a member of the list after the location.
+@param[in] Pointer to the list.
+@param[in] Number of the list after which the element should be deleted.
+\return Returns 0 if the function behaves correctly.
+*/
+int Delete_After (List* list1, int location);
