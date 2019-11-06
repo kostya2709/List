@@ -7,6 +7,7 @@
 const int list_start_size = 5;
 
 typedef double elem_t;
+#define PRINTF_ELEM_T "%g"
 
 const int POISON = -666;
 
@@ -92,3 +93,9 @@ Attention! Use only after the work with the list.
 \return Returns 0 if the function behaves correctly.
 */
 int List_Destruct (List* list1);
+
+/*!This function converts the main information about the list to graph.
+@param[in] Pointer to the list.
+\return Returns 0 if the function behaves correctly.
+*/
+int List_Dump_Graph (List* list1);

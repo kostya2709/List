@@ -1,6 +1,5 @@
 //!@file
 
-#include <stdio.h>
 #include "List_Header.h"
 
 int main()
@@ -30,6 +29,13 @@ int main()
     Delete (&list1, 3);
 
     DUMP (list1);
+
+    Insert_After(&list1, 4, 70);
+
+    DUMP (list1);
+
+
+    List_Dump_Graph (&list1);
 
     if (List_Destruct (&list1))
         printf ("Error in pointers of the list in List_Destruct!\n");

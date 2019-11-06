@@ -319,3 +319,51 @@ int List_Destruct (List* list1)
 
     return 0;
 }
+
+int List_Dump_Graph (List* list1)
+{
+    FILE* f = fopen ("graph_dump.gv", "w");
+
+    fprintf (f, "digraph First{\n");
+    fprintf (f, "node [shape=\"record\", style=\"filled\", fillcolor=\"green\"];\n");
+    fprintf (f, "rankdir=\"LR\";\n");
+    fprintf (f, "dpi=\"300\";\n");
+
+    fprintf (f, "\"head\" [label = \"head\"];\n");
+    fprintf (f, "\"tail\" [label = \"tail\"];\n");
+
+    fprintf (f, "node [fillcolor=\"lightblue\"];");
+
+    int number = list1->head;
+    int i = 0;
+    while (true)
+    {
+        fprintf (f, "\"box%d\"  [label = \"adress = %d|value = " PRINTF_ELEM_T "|next = %d|prev = %d\"];\n\n",
+                 i, number, *(list1->data + number), *(list1->next + number), *(list1->prev + number));
+        i++;
+        if (number == list1->tail)
+            break;
+        number = *(list1->next + number);
+    }
+
+    fprintf (f, "\"head\"->\"box0\";\n");
+
+    int j = 0;
+    for (j = 0; j < i - 1; j++)
+        fprintf (f, "\"box%d\" -> \"box%d\";\n", j, j + 1);
+
+    fprintf (f, "\"box%d\" -> \"tail\";\n\n", j, 0);
+
+    fprintf (f, "node [fillcolor=\"green\"];");
+
+    fprintf (f, "\"info\" [label = \"Info|head = %d|tail = %d|free = %d|size = %d|max_size = %d\"]\n", list1->head, list1->tail, list1->free, list1->size, list1->max_size);
+
+
+    fprintf (f, "}");
+
+    fclose (f);
+
+    system ("dot -Tpng graph_dump.gv -o list.png");
+
+    return 0;
+}
