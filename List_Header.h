@@ -11,6 +11,8 @@ typedef double elem_t;
 
 const int POISON = -666;
 
+const int EMPTY = -27;
+
 struct List
 {
     elem_t* data;
@@ -38,7 +40,7 @@ Attention! This function is to be required only from #define DUMP(); .
 @param[in] Name of the list.
 \return Returns 0 if the function behaves correctly.
 */
-int List_Dump (List* list1, char* list_name);
+int List_Dump (const List* list1, char* list_name);
 
 
 /*! This function inserts a member of the list after an elements of it.
@@ -59,11 +61,26 @@ int Insert_After (List* list1, int location, elem_t elem);
 int Insert_Before (List* list1, int location, elem_t elem);
 
 
+/*! This function inserts a member of the list to the first element.
+@param[in] Pointer to the list.
+@param[in] The element to insert.
+\return Returns 0 if the function behaves correctly.
+*/
+int Insert_Front (List* list1, elem_t elem);
+
+
+/*! This function inserts a member of the list to the last element.
+@param[in] Pointer to the list.
+@param[in] The element to insert.
+\return Returns 0 if the function behaves correctly.
+*/
+int Insert_Back (List* list1, elem_t elem);
+
 /*!This function checks whether location is valid.
 @param[in] Pointer to the list.
 @param[in] Number of the list to check.
 */
-int Error_Check (List* list1, int location);
+int Error_Check (const List* list1, int location);
 
 
 /*! This function deletes a member of the list.
@@ -98,4 +115,17 @@ int List_Destruct (List* list1);
 @param[in] Pointer to the list.
 \return Returns 0 if the function behaves correctly.
 */
-int List_Dump_Graph (List* list1);
+int List_Dump_Graph (const List* list1);
+
+/*!
+@brief This function changes two elements to each other of the array arr[] with indexes a and b.
+param[in] *arr[] The array which elements need changing with each other.
+param[in] a The first index.
+param[in] a The second index.
+*/
+
+void Swap (void* a, void* b, int sizze);
+
+int List_Qsort (int left, int right, List* list1);
+
+void Swap (void* a, void* b, int sizze);

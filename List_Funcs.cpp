@@ -5,6 +5,7 @@ int List_Construct (List* list1)
 {
     list1->data = (double*)calloc (1, list_start_size * sizeof (elem_t));
     *list1->data = POISON;
+
     list1->next = (int*)calloc (1, list_start_size * sizeof (int));
     list1->prev = (int*)calloc (1, list_start_size * sizeof (int));
 
@@ -26,6 +27,9 @@ int List_Construct (List* list1)
 
     for (i = 1; i < list1->max_size; i++)
         *(list1->next + i) = i + 1;
+
+    for (i = 1; i < list1->max_size; i++)
+        *(list1->data + i) = EMPTY;
 
     return 0;
 }
@@ -128,6 +132,18 @@ int Insert_Before (List* list1, int location, elem_t elem)
 
 }
 
+int Insert_Front (List* list1, elem_t elem)
+{
+    Insert_Before (list1, list1->head, elem);
+}
+
+
+int Insert_Back (List* list1, elem_t elem)
+{
+    Insert_After (list1, list1->tail, elem);
+}
+
+
 int Delete (List* list1, int location)
 {
 
@@ -224,7 +240,7 @@ int Delete_After (List* list1, int location)
 }
 
 
-int List_Dump (List* list1, char* list_name)
+int List_Dump (const List* list1, char* list_name)
 {
     printf ("\n\n\tList_name: %s\n", list_name);
     printf ("\tList max_size: %d\n", list1->max_size);
@@ -250,7 +266,7 @@ int List_Dump (List* list1, char* list_name)
     return 0;
 }
 
-int Error_Check (List* list1, int location)
+int Error_Check (const List* list1, int location)
 {
     if (location < 0)
     {
@@ -294,7 +310,7 @@ int List_Realloc (List* list1, int new_size)
         int i = 0;
 
         for (i = prev_size; i < new_size; i++)
-            *(list1->data + i) = 0;
+            *(list1->data + i) = EMPTY;
 
         for (i = prev_size; i < new_size; i++)
             *(list1->prev + i) = POISON;
@@ -320,7 +336,7 @@ int List_Destruct (List* list1)
     return 0;
 }
 
-int List_Dump_Graph (List* list1)
+int List_Dump_Graph (const List* list1)
 {
     FILE* f = fopen ("graph_dump.gv", "w");
 
@@ -366,4 +382,71 @@ int List_Dump_Graph (List* list1)
     system ("dot -Tpng graph_dump.gv -o list.png");
 
     return 0;
+}
+
+int List_Sorting (List* list1, int left, int right)
+{
+
+    List_Qsort (1, 2, list1);
+}
+
+int List_Qsort (int left, int right, List* list1)
+{
+/*
+        if (left >= right)
+            return 0;
+
+        int mid = (left + right) / 2;
+        Swap ((char*)arr + left * ssize, (char*)arr + mid * ssize, ssize);
+
+        int last = left;
+        int i = 0;
+
+        for (i = left; i <= right; i++)
+            if (compare ((void*)((char*)arr + left * ssize), (void*)((char*)arr + i * ssize)) > 0)
+                Swap ((char*)arr + i * ssize, (char*)arr + (++last) * ssize, ssize);
+
+        Swap ((char*)arr + left * ssize, (char*)arr + last * ssize, ssize);
+
+        Qsort (left, last -  1, arr, ssize, compare);
+        Qsort (last + 1, right, arr, ssize, compare);
+
+*/
+}
+
+void Swap (void* a, void* b, int sizze)
+    {
+        int i;
+        size_t temp;
+        for (i = 0; i < sizze; i++)
+        {
+            temp = (size_t)(*((char*)a + i));
+            *((char*)a + i) = *((char*)b + i);
+            *((char*)b + i) = temp;
+        }
+    }
+
+void List_Swap (List* list1, int n1, int n2)
+{/*
+    Swap (list1->data + n1, list1->data + n2, sizeof (elem_t));
+
+    Swap (list1->next + n1, list1->next + n2, sizeof (*list1->next));
+
+    Swap (list1->prev + n1, list1->prev + n2, sizeof (*list1->prev));
+
+#define Change_Prop(prop, elem1, elem2);         \
+#define LIST list1->                            \
+if (LIST##prop == elem1)                       \
+    list1->free = elem2;                         \
+else if (list1->free == elem2)                  \
+    list1->free = elem1;
+
+    Change_Prop (free, n1, n2);
+    Change_Prop (head, n1, n2);
+    Change_Prop (tail, n1, n2);
+
+#undef Change_Prop
+*/
+    return;
+
 }

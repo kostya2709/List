@@ -34,6 +34,13 @@ int main()
 
     DUMP (list1);
 
+    Insert_Front (&list1, 228);
+
+    DUMP (list1);
+
+    Insert_Back (&list1, 111);
+
+    DUMP (list1);
 
     List_Dump_Graph (&list1);
 
