@@ -6,6 +6,8 @@
 
 const int list_start_size = 5;
 
+const int FILE_NAME_SIZE = 20;
+
 typedef double elem_t;
 #define PRINTF_ELEM_T "%g"
 
@@ -79,8 +81,11 @@ int Insert_Back (List* list1, elem_t elem);
 /*!This function checks whether location is valid.
 @param[in] Pointer to the list.
 @param[in] Number of the list to check.
+@param[in] min Minimal available number.
+@param[in] max Maximal available number.
+@param[in] dead Unavailable list element.
 */
-int Error_Check (const List* list1, int location);
+int Error_Check (const List* list1, int location, int min);
 
 
 /*! This function deletes a member of the list.
@@ -89,13 +94,6 @@ int Error_Check (const List* list1, int location);
 \return Returns 0 if the function behaves correctly.
 */
 int Delete (List* list1, int location);
-
-/*! This function deletes a member of the list after the location.
-@param[in] Pointer to the list.
-@param[in] Number of the list after which the element should be deleted.
-\return Returns 0 if the function behaves correctly.
-*/
-int Delete_After (List* list1, int location);
 
 /*! This function changes the allocated memory.
 @param[in] Pointer to the list.
@@ -116,16 +114,3 @@ int List_Destruct (List* list1);
 \return Returns 0 if the function behaves correctly.
 */
 int List_Dump_Graph (const List* list1);
-
-/*!
-@brief This function changes two elements to each other of the array arr[] with indexes a and b.
-param[in] *arr[] The array which elements need changing with each other.
-param[in] a The first index.
-param[in] a The second index.
-*/
-
-void Swap (void* a, void* b, int sizze);
-
-int List_Qsort (int left, int right, List* list1);
-
-void Swap (void* a, void* b, int sizze);

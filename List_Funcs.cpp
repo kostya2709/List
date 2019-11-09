@@ -39,8 +39,8 @@ int Insert_After (List* list1, int location, elem_t elem)
 
     assert (list1);
 
-    if (Error_Check (list1, location))
-        return -1;
+    if (Error_Check (list1, location, 0))
+            return -1;
 
     list1->size += 1;
     int pos = list1->free;
@@ -95,38 +95,13 @@ int Insert_Before (List* list1, int location, elem_t elem)
 
     assert (list1);
 
-    if (Error_Check (list1, location))
-        return -1;
-    if (location == 0)
+    if (location == list1->head)
     {
-        printf ("Error! You cannot insert before zero!\n");
+        printf ("Error! It is impossible to insert an element before the head of the list\n");
         return -1;
     }
 
-    list1->size += 1;
-    int pos = list1->free;
-    list1->free = *(list1->next + pos);
-
-    *(list1->data + pos) = elem;
-
-
-        int prev_el = *(list1->prev + location);
-        if (prev_el)
-            *(list1->next + prev_el) = pos;
-
-        *(list1->prev + location) = pos;
-        *(list1->next + pos) = location;
-        *(list1->prev + pos) = prev_el;
-
-        if (!prev_el)
-            list1->head = pos;
-
-    if (list1->size + 1 == list1->max_size)
-    {
-        List_Realloc(list1, list1->max_size * 2);
-        list1->max_size *= 2;
-    }
-
+    Insert_After (list1, *(list1->prev + location), elem);
 
     return 0;
 
@@ -149,7 +124,7 @@ int Delete (List* list1, int location)
 
     assert (list1);
 
-    if (Error_Check (list1, location))
+    if (Error_Check (list1, location, 0))
         return -1;
     if (location == 0)
     {
@@ -188,52 +163,7 @@ int Delete (List* list1, int location)
     *(list1->prev + location) = POISON;
     list1->free = location;
 
-
-    return 0;
-
-}
-
-int Delete_After (List* list1, int location)
-{
-
-    assert (list1);
-
-    if (Error_Check (list1, location))
-        return -1;
-    if (location == 0)
-    {
-        printf ("Error! You cannot delete a number after 0!\n");
-        return -1;
-    }
-    if (location == list1->tail)
-    {
-        printf ("Error! You cannot delete a number after the list tail!\n");
-        return -1;
-    }
-
-    list1->size -= 1;
-
-        int next_el = *(list1->next + location);
-
-        if (next_el == list1->tail)
-        {
-            *(list1->next + location) = 0;
-            list1->tail = location;
-        }
-
-        else
-        {
-            int next_next_el = *(list1->next + next_el);
-            *(list1->prev + next_next_el) = location;
-            *(list1->next + location) = next_next_el;
-        }
-
-
-    *(list1->data + next_el) = 0;
-
-    *(list1->next + next_el) = list1->free;
-    *(list1->prev + next_el) = POISON;
-    list1->free = next_el;
+    *(list1->data + location) = EMPTY;
 
     return 0;
 
@@ -266,22 +196,23 @@ int List_Dump (const List* list1, char* list_name)
     return 0;
 }
 
-int Error_Check (const List* list1, int location)
+int Error_Check (const List* list1, int location, int min)
 {
-    if (location < 0)
+    if (location < min)
     {
         printf ("Error! Invalid index of list!\n");
-        printf ("Expected a number above zero\n");
+        printf ("Expected a number above %d\n", min);
         printf ("Received: %d\n", location);
 
         return -1;
     }
 
-    if (*(list1->prev + location) == POISON || location > list1->max_size)
+    if ((*(list1->prev + location) == POISON) && (location))
     {
         printf ("Error! Invalid index of list!\n");
-        printf ("Expected an existing element from zero to max_size! (max_size = %d)\n", list1->max_size);
+        printf ("Expected an existing element from zero to %d\n", list1->max_size);
         printf ("Received: %d\n", location);
+        printf ("znachenie = %d\n", *(list1->prev + location));
 
         return -1;
     }
@@ -338,37 +269,99 @@ int List_Destruct (List* list1)
 
 int List_Dump_Graph (const List* list1)
 {
-    FILE* f = fopen ("graph_dump.gv", "w");
+
+    char* file_name = (char*) calloc (FILE_NAME_SIZE, sizeof (char));
+    char* file_png = (char*) calloc (FILE_NAME_SIZE, sizeof (char));
+
+
+    file_name = "graph_dump.gv";
+    file_png = "list_dump.png";
+
+
+    FILE* f = fopen (file_name, "w");
+
 
     fprintf (f, "digraph First{\n");
-    fprintf (f, "node [shape=\"record\", style=\"filled\", fillcolor=\"green\"];\n");
+    fprintf (f, "node [shape=\"record\", style=\"filled\", fillcolor=\"pink\"];\n");
     fprintf (f, "rankdir=\"LR\";\n");
     fprintf (f, "dpi=\"300\";\n");
 
     fprintf (f, "\"head\" [label = \"head\"];\n");
     fprintf (f, "\"tail\" [label = \"tail\"];\n");
 
-    fprintf (f, "node [fillcolor=\"lightblue\"];");
+    fprintf (f, "\"head1\" [label = \"head\"];\n");
+    fprintf (f, "\"tail1\" [label = \"tail\"];\n");
+
+    fprintf (f, "node [fillcolor=\"lightblue\"];\n");
+
+    int i = 0;
 
     int number = list1->head;
-    int i = 0;
-    while (true)
-    {
-        fprintf (f, "\"box%d\"  [label = \"adress = %d|value = " PRINTF_ELEM_T "|next = %d|prev = %d\"];\n\n",
-                 i, number, *(list1->data + number), *(list1->next + number), *(list1->prev + number));
-        i++;
-        if (number == list1->tail)
-            break;
-        number = *(list1->next + number);
-    }
+        while (true)
+        {
+            fprintf (f, "\"box%d\"  [label = \"adress = %d|value = " PRINTF_ELEM_T "|next = %d|prev = %d\"];\n\n",
+                     i, number, *(list1->data + number), *(list1->next + number), *(list1->prev + number));
+            i++;
+            if (number == list1->tail)
+                break;
+            number = *(list1->next + number);
+        }
+
+        int temp = i;
+
+        for (i = 0; i < list1->max_size - 1; i++)
+        {
+            if (*(list1->data + i + 1) == EMPTY)
+                    fprintf (f, "node [fillcolor=\"green\"];\n");
+
+            fprintf (f, "\"box%d\"  [label = \"adress = %d|value = " PRINTF_ELEM_T "|next = %d|prev = %d\"];\n\n",
+                i + temp, i + 1, *(list1->data + i + 1), *(list1->next + i + 1), *(list1->prev + i + 1));
+
+            if (*(list1->data + i + 1) == EMPTY)
+                    fprintf (f, "node [fillcolor=\"lightblue\"];\n");
+
+        }
 
     fprintf (f, "\"head\"->\"box0\";\n");
 
     int j = 0;
-    for (j = 0; j < i - 1; j++)
-        fprintf (f, "\"box%d\" -> \"box%d\";\n", j, j + 1);
 
-    fprintf (f, "\"box%d\" -> \"tail\";\n\n", j, 0);
+    for (j = 0; j < temp - 1; j++)
+            fprintf (f, "\"box%d\" -> \"box%d\";\n", j, j + 1);
+
+    fprintf (f, "\"box%d\" -> \"tail\";\n\n", j);
+
+
+    fprintf (f, "\"head1\"->\"box%d\";\n", temp);
+
+    fprintf (f, "edge[color=\"white\"];\n");
+
+    for (j = 0; j < i - 1; j++)
+            fprintf (f, "\"box%d\" -> \"box%d\";\n", j + temp, j + 1 + temp);
+
+    fprintf (f, "edge[color=\"black\"];\n");
+
+
+    j = list1->head;
+    while (true)
+    {
+        i = *(list1->next + j);
+        fprintf (f, "\"box%d\" -> \"box%d\";\n", j + temp - 1, i + temp - 1);
+
+        j = i;
+
+        if (i == list1->tail)
+            break;
+    }
+    j = list1->free;
+    while (*(list1->next + j) < list1->max_size)
+    {
+        i = *(list1->next + j);
+        fprintf (f, "\"box%d\" -> \"box%d\";\n", j + temp - 1, i + temp - 1);
+        j = i;
+    }
+
+    fprintf (f, "\"box%d\"->\"tail1\";\n", list1->tail + temp - 1);
 
     fprintf (f, "node [fillcolor=\"green\"];");
 
@@ -379,74 +372,11 @@ int List_Dump_Graph (const List* list1)
 
     fclose (f);
 
-    system ("dot -Tpng graph_dump.gv -o list.png");
+    system ("dot -Tpng graph_dump.gv -o list_dump.png");
+
+    system ("pause");
 
     return 0;
 }
 
-int List_Sorting (List* list1, int left, int right)
-{
 
-    List_Qsort (1, 2, list1);
-}
-
-int List_Qsort (int left, int right, List* list1)
-{
-/*
-        if (left >= right)
-            return 0;
-
-        int mid = (left + right) / 2;
-        Swap ((char*)arr + left * ssize, (char*)arr + mid * ssize, ssize);
-
-        int last = left;
-        int i = 0;
-
-        for (i = left; i <= right; i++)
-            if (compare ((void*)((char*)arr + left * ssize), (void*)((char*)arr + i * ssize)) > 0)
-                Swap ((char*)arr + i * ssize, (char*)arr + (++last) * ssize, ssize);
-
-        Swap ((char*)arr + left * ssize, (char*)arr + last * ssize, ssize);
-
-        Qsort (left, last -  1, arr, ssize, compare);
-        Qsort (last + 1, right, arr, ssize, compare);
-
-*/
-}
-
-void Swap (void* a, void* b, int sizze)
-    {
-        int i;
-        size_t temp;
-        for (i = 0; i < sizze; i++)
-        {
-            temp = (size_t)(*((char*)a + i));
-            *((char*)a + i) = *((char*)b + i);
-            *((char*)b + i) = temp;
-        }
-    }
-
-void List_Swap (List* list1, int n1, int n2)
-{/*
-    Swap (list1->data + n1, list1->data + n2, sizeof (elem_t));
-
-    Swap (list1->next + n1, list1->next + n2, sizeof (*list1->next));
-
-    Swap (list1->prev + n1, list1->prev + n2, sizeof (*list1->prev));
-
-#define Change_Prop(prop, elem1, elem2);         \
-#define LIST list1->                            \
-if (LIST##prop == elem1)                       \
-    list1->free = elem2;                         \
-else if (list1->free == elem2)                  \
-    list1->free = elem1;
-
-    Change_Prop (free, n1, n2);
-    Change_Prop (head, n1, n2);
-    Change_Prop (tail, n1, n2);
-
-#undef Change_Prop
-*/
-    return;
-
-}
